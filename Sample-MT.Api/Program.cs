@@ -1,5 +1,6 @@
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Sample_MT.Components.Consumers;
 using Sample_MT.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,7 +10,7 @@ builder.Services.TryAddSingleton(KebabCaseEndpointNameFormatter.Instance);
 builder.Services.AddMassTransit(cfg =>
 {
     cfg.AddBus(provider => Bus.Factory.CreateUsingRabbitMq());
-    cfg.AddRequestClient<SubmitOrder>();
+    cfg.AddRequestClient<SubmitOrder>(new Uri($"exchange:{KebabCaseEndpointNameFormatter.Instance.Consumer<SubmitOrderConsumer>()}"));
 });
 
 builder.Services.AddControllers();
